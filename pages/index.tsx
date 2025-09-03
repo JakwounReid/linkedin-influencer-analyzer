@@ -261,7 +261,7 @@ function PriceCard({tier, price, period, bullets, highlight}:{tier:string; price
       <ul className="mt-4 space-y-2 text-sm text-neutral-300">
         {bullets.map(b => <li key={b} className="flex items-start gap-2"><span className="mt-1 h-1.5 w-1.5 rounded-full bg-white/80"/> {b}</li>)}
       </ul>
-      <a href="#cta" className="mt-6 inline-block rounded-xl bg-white text-neutral-900 px-5 py-3 font-semibold hover:bg-neutral-200">Get started</a>
+      <button onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})} className="mt-6 inline-block rounded-xl bg-white text-neutral-900 px-5 py-3 font-semibold hover:bg-neutral-200">Get started</button>
     </div>
   );
 }
