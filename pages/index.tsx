@@ -40,7 +40,33 @@ export default function InfluencerAnalyzerLanding() {
             <form
               id="cta"
               className="mt-6 flex flex-col sm:flex-row gap-3"
-              onSubmit={(e)=>{e.preventDefault(); alert(`Thanks! We'll reach out at ${email}.`);}}
+              onSubmit={async (e) => {
+                e.preventDefault();
+                const utms = {
+                  utm_source: sessionStorage.getItem("utm_source") || "direct",
+                  utm_medium: sessionStorage.getItem("utm_medium") || "direct",
+                  utm_campaign: sessionStorage.getItem("utm_campaign") || "landing",
+                  utm_content: sessionStorage.getItem("utm_content"),
+                  utm_term: sessionStorage.getItem("utm_term"),
+                };
+
+                try {
+                  await fetch("/api/lead", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      email,
+                      tag: "early-access",
+                      utms,
+                      path: location.pathname + location.search,
+                      referrer: document.referrer || ""
+                    }),
+                  });
+                  alert(`Thanks! We'll reach out at ${email}.`);
+                } catch (err) {
+                  alert("Something went wrong. Please try again.");
+                }
+              }}
             >
               <input
                 value={email}
@@ -193,7 +219,33 @@ export default function InfluencerAnalyzerLanding() {
             <p className="mt-4 text-neutral-400 text-sm">Build smarter, faster LinkedIn content by learning exactly what works for top creators.</p>
           </div>
           <div>
-            <form className="flex gap-3" onSubmit={(e)=>{e.preventDefault(); alert(`Subscribed: ${email}`);}}>
+            <form className="flex gap-3" onSubmit={async (e) => {
+              e.preventDefault();
+              const utms = {
+                utm_source: sessionStorage.getItem("utm_source") || "direct",
+                utm_medium: sessionStorage.getItem("utm_medium") || "direct",
+                utm_campaign: sessionStorage.getItem("utm_campaign") || "landing",
+                utm_content: sessionStorage.getItem("utm_content"),
+                utm_term: sessionStorage.getItem("utm_term"),
+              };
+
+              try {
+                await fetch("/api/lead", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    email,
+                    tag: "newsletter",
+                    utms,
+                    path: location.pathname + location.search,
+                    referrer: document.referrer || ""
+                  }),
+                });
+                alert(`Subscribed: ${email}`);
+              } catch (err) {
+                alert("Something went wrong. Please try again.");
+              }
+            }}>
               <input
                 value={email}
                 onChange={(e)=>setEmail(e.target.value)}
