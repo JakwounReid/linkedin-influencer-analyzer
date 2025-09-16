@@ -112,17 +112,6 @@ export default function InfluencerAnalyzerLanding() {
         </div>
       </section>
 
-      {/* Social proof */}
-      <section className="border-t border-neutral-900">
-        <div className="mx-auto max-w-6xl px-4 py-12">
-          <p className="text-center text-neutral-400 text-sm">Trusted by makers, freelancers, and growth teams</p>
-          <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-6 opacity-70">
-            {['HackerLab Studio','Engineering Growth Lab','Side‑Gig Stats Central','Shovel Studio'].map(n => (
-              <div key={n} className="text-center text-sm border border-neutral-900 rounded-xl py-3">{n}</div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* Features */}
       <section id="features" className="border-t border-neutral-900">
@@ -166,7 +155,6 @@ export default function InfluencerAnalyzerLanding() {
         <div className="mx-auto max-w-6xl px-4 py-16">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold">Sample report</h2>
-            <a href="#" className="text-sm text-neutral-300 hover:text-white underline underline-offset-4">View full sample (PDF)</a>
           </div>
           <div className="mt-6 grid md:grid-cols-3 gap-6">
             <Card title="Posting cadence heatmap" text="See high‑performing day/time windows."/>
@@ -304,6 +292,34 @@ function FAQ({q, a}:{q:string; a:string}){
 }
 
 function PriceCard({tier, price, period, bullets, highlight}:{tier:string; price:string; period:string; bullets:string[]; highlight?:boolean}){
+  const handlePricingClick = async () => {
+    const utms = {
+      utm_source: sessionStorage.getItem("utm_source") || "direct",
+      utm_medium: sessionStorage.getItem("utm_medium") || "direct",
+      utm_campaign: sessionStorage.getItem("utm_campaign") || "landing",
+      utm_content: sessionStorage.getItem("utm_content"),
+      utm_term: sessionStorage.getItem("utm_term"),
+    };
+
+    try {
+      await fetch("/api/lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: "",
+          tag: `pricing-${tier.toLowerCase()}`,
+          utms,
+          path: location.pathname + location.search,
+          referrer: document.referrer || ""
+        }),
+      });
+    } catch (err) {
+      console.error("Failed to track pricing click:", err);
+    }
+
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  };
+
   return (
     <div className={`rounded-2xl border p-6 ${highlight ? 'border-white/60 bg-neutral-900/60 shadow-xl' : 'border-neutral-800 bg-neutral-900/40'}`}>
       <div className="flex items-baseline gap-2">
@@ -313,7 +329,7 @@ function PriceCard({tier, price, period, bullets, highlight}:{tier:string; price
       <ul className="mt-4 space-y-2 text-sm text-neutral-300">
         {bullets.map(b => <li key={b} className="flex items-start gap-2"><span className="mt-1 h-1.5 w-1.5 rounded-full bg-white/80"/> {b}</li>)}
       </ul>
-      <button onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})} className="mt-6 inline-block rounded-xl bg-white text-neutral-900 px-5 py-3 font-semibold hover:bg-neutral-200">Get started</button>
+      <button onClick={handlePricingClick} className="mt-6 inline-block rounded-xl bg-white text-neutral-900 px-5 py-3 font-semibold hover:bg-neutral-200">Get started</button>
     </div>
   );
 }
